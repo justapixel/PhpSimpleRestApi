@@ -100,5 +100,40 @@
 
       return false;
     }
+
+    public function update() {
+      $query = 'UPDATE '
+        . $this->table . ' 
+        SET
+          title = :title,
+          body = :body,
+          author = :author,
+          category_id = :category_id
+        WHERE
+          id = :id
+        ';
+
+      $stmt = $this->conn->prepare($query);
+
+      $this->title = filter_var($this->title, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+      $this->body = filter_var($this->body, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+      $this->author = filter_var($this->author, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+      $this->category_id = filter_var($this->category_id, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+      $this->id = filter_var($this->id, FILTER_SANITIZE_NUMBER_INT);
+
+      $stmt->bindParam(':title', $this->title);
+      $stmt->bindParam(':body', $this->body);
+      $stmt->bindParam(':author', $this->author);
+      $stmt->bindParam(':category_id', $this->category_id);
+      $stmt->bindParam(':id', $this->id);
+
+      if($stmt->execute()){
+        return true;
+      }
+
+      printf("Error: %s.\n", $stmt->error);
+
+      return false;
+    }
   }
   
