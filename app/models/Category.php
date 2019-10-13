@@ -27,4 +27,26 @@
 
       return $stmt;
     }
+
+    public function create() {
+      $query = 'INSERT INTO '
+        . $this->table . ' 
+        SET
+          name = :name
+        ';
+
+      $stmt = $this->conn->prepare($query);
+
+      $this->name = filter_var($this->name, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+
+      $stmt->bindParam(':name', $this->name);
+
+      if($stmt->execute()){
+        return true;
+      }
+
+      printf("Error: %s.\n", $stmt->error);
+
+      return false;
+    }
 }
