@@ -71,4 +71,30 @@
 
       return false;
     }
+
+    public function update() {
+      $query = 'UPDATE '
+        . $this->table . ' 
+        SET
+          name = :name
+        WHERE
+          id = :id
+        ';
+
+      $stmt = $this->conn->prepare($query);
+
+      $this->name = filter_var($this->name, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+      $this->id = filter_var($this->id, FILTER_SANITIZE_NUMBER_INT);
+
+      $stmt->bindParam(':name', $this->name);
+      $stmt->bindParam(':id', $this->id);
+
+      if($stmt->execute()){
+        return true;
+      }
+
+      printf("Error: %s.\n", $stmt->error);
+
+      return false;
+    }
 }
